@@ -45,6 +45,9 @@ public class AbstractSimpleActor implements Actor {
 
         mBody= world.getBox2dWorld().createBody(bodyDef);
 
+        // TODO: this could be selected by passing argument to the constructor
+        mBody.setSleepingAllowed(false);
+
         mBody.setUserData(this);
 
         if (dynamic) {

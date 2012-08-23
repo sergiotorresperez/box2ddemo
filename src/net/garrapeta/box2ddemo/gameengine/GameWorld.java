@@ -33,6 +33,9 @@ public abstract class GameWorld {
 
     /** Game view   */
     private GameView mGameView;
+    
+    /** Game loop thread */
+    private Thread mGameThread;
 
     /**
      * Queue of messages, to process all the logic of the game in a stage of the
@@ -42,6 +45,9 @@ public abstract class GameWorld {
 
     /** Whether the game is running (looping) */
     private boolean mRunning = false;
+
+    /** Whether the game is paused */
+    private boolean mPaused = false;
 
     /** FPS of the game */
     private int mFps = 33;
@@ -232,22 +238,62 @@ public abstract class GameWorld {
      * Start looping
      */
     public void start() {
+        Log.i(LOG_SRC, "Starting game loop...");
         mRunning = true;
 
-        Thread gameThread = new Thread(new GameLoopRunnable());
-        gameThread.start();
+        mGameThread = new Thread(new GameLoopRunnable());
+        mGameThread.start();
 
     }
 
     /**
-     * Stop looping
+     * Stop looping (ends the game loop thread)
      */
     public void stop() {
+        Log.i(LOG_SRC, "Stopping game loop...");
         mRunning = false;
     }
 
-    // TODO: create methods to pause, resume, dispose the world, so it can be synched
-    //        to the life cycle of the activity...
+    /**
+     * Pause the game thread (does not exit the game loop, just pauses it)
+     */
+    public void pause() {
+        Log.i(LOG_SRC, "Pausing game loop...");
+        if (!mRunning) {
+            throw new IllegalStateException("Cannot pause the game while not running");
+        }
+        synchronized (mGameThread) {
+            mPaused = true;
+        }
+    }
+
+    /**
+     * Resume the game thread
+     */
+    public void resume() {
+        Log.i(LOG_SRC, "Resuming game loop...");
+        if (!mRunning) {
+            throw new IllegalStateException("Cannot resume the game while not running");
+        }
+        synchronized (mGameThread) {
+            mPaused = false;
+            mGameThread.notify();
+        }
+    }
+
+    /**
+     * @return if the game is running (has been started)
+     */
+    public boolean isRunning() {
+        return mRunning;
+    }
+
+    /**
+     * @return if the game is paused
+     */
+    public boolean isPaused() {
+        return mPaused;
+    }
 
     
     /**
@@ -307,6 +353,20 @@ public abstract class GameWorld {
                 Log.v(LOG_SRC_LOOP, "Frame time: " + frameTime);
 
                 mCurrentFps = 1000 / frameTime;
+
+                // The pause mechanism is done by making the thread wait until is 
+                // resumed (awaken)
+                synchronized (mGameThread) {
+                    if (mPaused) {
+                        Log.d(LOG_SRC_LOOP, "Game loop paused");
+                        try {
+                            mGameThread.wait();
+                            Log.d(LOG_SRC_LOOP, "Game loop resumed");
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
 
             Log.i(LOG_SRC_LOOP, "Draw loop ended");

@@ -34,6 +34,33 @@ public class CirclesActivity extends Activity implements GameViewListener {
 
         init();
     }
+    
+    
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mWorld.isPaused()) {
+            mWorld.resume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mWorld.isRunning()) {
+            mWorld.pause();
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mWorld.isRunning()) {
+            mWorld.stop();
+        }
+    }
 
     /**
      * Inits the activity
@@ -60,8 +87,5 @@ public class CirclesActivity extends Activity implements GameViewListener {
         mWorld.init(w, h);
         mWorld.start();
     }
-
-    //TODO: write the onPause(), etc methods to sync the gameloop to the life cycle of the
-    //       activity
 
 }
