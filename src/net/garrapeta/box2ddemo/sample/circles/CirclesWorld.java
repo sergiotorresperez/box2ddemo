@@ -6,8 +6,8 @@ import net.garrapeta.box2ddemo.gameengine.GameMessage;
 import net.garrapeta.box2ddemo.gameengine.GameView;
 import net.garrapeta.box2ddemo.gameengine.GameWorld;
 import net.garrapeta.box2ddemo.gameengine.PointsConversionUtils;
-import net.garrapeta.box2ddemo.gameengine.actor.SimpleCircunferenceActor;
-import net.garrapeta.box2ddemo.gameengine.actor.SimpleEdgeActor;
+import net.garrapeta.box2ddemo.gameengine.actor.SimpleCircumferenceActor;
+import net.garrapeta.box2ddemo.gameengine.actor.SimpleLoopActor;
 
 
 import com.badlogic.gdx.math.Vector2;
@@ -59,7 +59,7 @@ public class CirclesWorld extends GameWorld implements OnTouchListener, SensorEv
                 new Vector2(worldWidth - m, m),
                 new Vector2(m, m)
             };
-        addActor(new SimpleEdgeActor(this, new Vector2(0,0), false, vertex));
+        addActor(new SimpleLoopActor(this, new Vector2(0,0), false, vertex));
     }
 
     @Override
@@ -81,7 +81,7 @@ public class CirclesWorld extends GameWorld implements OnTouchListener, SensorEv
 
     private void createCircleActor(float screenX, float screenY) {
         Vector2 worldPos = PointsConversionUtils.getInstance().screenToWorld(screenX, screenY);
-        Actor actor = new SimpleCircunferenceActor(this, worldPos, true, 0.5f);
+        Actor actor = new SimpleCircumferenceActor(this, worldPos, true, 0.5f);
         addActor(actor);
     }
 

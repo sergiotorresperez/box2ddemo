@@ -6,8 +6,8 @@ import android.graphics.Path;
 import android.graphics.PointF;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.Shape.Type;
 
@@ -30,12 +30,14 @@ public class ShapeDrawerHelper {
         case Circle:
             drawCircleShape(canvas, paint, (CircleShape) shape);
             break;
-        case Polygon:
-            drawPolygonShape(canvas, paint, (PolygonShape) shape);
+        case Chain:
+            drawSegmentedShape(canvas, paint, (ChainShape) shape);
             break;
         default:
             throw new IllegalArgumentException("Can not draw shape: " + shape);
         }
+        
+        //TODO: create methods for drawing other shapes supported by Box2D (polygons and edges)
     }
 
     /**
@@ -55,15 +57,15 @@ public class ShapeDrawerHelper {
      * Draws a polygon shape (edges included)
      * @param canvas
      * @param paint
-     * @param polygon
+     * @param chain
      */
-    private static void drawPolygonShape(Canvas canvas, Paint paint, PolygonShape polygon) {
+    private static void drawSegmentedShape(Canvas canvas, Paint paint, ChainShape chain) {
         
-        int count = polygon.getVertexCount();
+        int count = chain.getVertexCount();
         PointF[] aux = new PointF[count];
         for (int i = 0; i < count; i++) {
             Vector2 vertex = new Vector2();
-            polygon.getVertex(i, vertex);
+            chain.getVertex(i, vertex);
             PointF screenPos = new PointF(PointsConversionUtils.getInstance()
                     .metersToPixels(vertex.x), -PointsConversionUtils
                     .getInstance().metersToPixels(vertex.y));

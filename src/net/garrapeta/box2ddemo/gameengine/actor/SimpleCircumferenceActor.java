@@ -8,11 +8,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 
 /**
- * Actor defined by just one physical body, that has just one circunference as shape. *
+ * Actor defined by just one physical body, that has just one circumference as shape. *
  */
-public class SimpleCircunferenceActor extends AbstractSimpleActor {
+public class SimpleCircumferenceActor extends AbstractSimpleActor {
 
-    public SimpleCircunferenceActor(CirclesWorld world, Vector2 worldPos, boolean dynamic, float radius) {
+    public SimpleCircumferenceActor(CirclesWorld world, Vector2 worldPos, boolean dynamic, float radius) {
         super(world, worldPos, dynamic);
 
         mColor = Color.RED;
